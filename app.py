@@ -67,7 +67,8 @@ def login():
         return jsonify({'error': '이메일 또는 비밀번호가 올바르지 않습니다'}), 401
     
     # JWT 토큰 생성
-    access_token = create_access_token(identity=user.id)
+    print(f'userid {user.id} {type(user.id)}')
+    access_token = create_access_token(identity=f'{user.id}')
     
     return jsonify({
         'access_token': access_token,
