@@ -8,12 +8,12 @@ def create_all_schemas(api):
     
     # 사용자 스키마 생성
     user_schemas = create_user_schemas(api)
-
-    # 라즈베리파이 스키마 생성
-    raspberry_schemas = create_raspberry_schemas(api)
     
     # 공통 스키마 생성
     common_schemas = create_common_schemas(api)
+    
+    # Raspberry 스키마 생성
+    raspberry_schemas = create_raspberry_schemas(api)
     
     # 모든 스키마 통합
     all_schemas = {**user_schemas, **common_schemas, **raspberry_schemas}

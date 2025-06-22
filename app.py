@@ -5,9 +5,9 @@ from flask_restx import Api, Resource, fields
 import bcrypt
 from db import db, User
 from schemas import create_all_schemas
-from routes.auth import create_auth_routes
-from routes.user import create_user_routes
-from routes.raspberry import create_raspberry_routes
+from routes.auth import Register, Login, init_auth_schemas
+from routes.user import UserInfo, init_user_schemas
+from routes.raspberry import RaspberryList, RaspberryCreate, RaspberryDetail, init_raspberry_schemas
 import os
 from datetime import timedelta
 
@@ -23,10 +23,18 @@ ns = api.namespace('api', description='API 엔드포인트')
 # 스키마 생성
 schemas = create_all_schemas(api)
 
-# 라우트 생성
-create_auth_routes(ns, schemas)
-create_user_routes(ns, schemas)
-create_raspberry_routes(ns, schemas)
+# 스키마 초기화
+init_auth_schemas(schemas)
+init_user_schemas(schemas)
+init_raspberry_schemas(schemas)
+
+# 라우트 등록
+Register.init(ns)
+Login.init(ns)
+UserInfo.init(ns)
+RaspberryList.init(ns)
+RaspberryCreate.init(ns)
+RaspberryDetail.init(ns)
 
 # 설정
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
