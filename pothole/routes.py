@@ -4,7 +4,10 @@ from flask_restx import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
 from datetime import datetime
-from db import db, User, Raspberry, PotHole
+from core.db import db
+from auth.models import User
+from raspberry.models import Raspberry
+from pothole.models import PotHole
 
 # 스키마는 나중에 주입받을 예정
 pothole_model = None

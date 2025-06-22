@@ -4,13 +4,18 @@ from flask_jwt_extended import JWTManager
 from flask_restx import Api
 import os
 from datetime import timedelta
-from db import db
+from core.db import db
 
 # 도메인별 모듈 import
 from auth import init_auth_routes, create_auth_schemas
 from user import init_user_routes, create_user_schemas
 from raspberry import init_raspberry_routes, create_raspberry_schemas
 from pothole import init_pothole_routes, create_pothole_schemas
+
+# 도메인별 모델 import (side-effect용)
+from auth.models import User
+from raspberry.models import Raspberry
+from pothole.models import PotHole
 
 app = Flask(__name__)
 CORS(app)

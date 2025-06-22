@@ -1,6 +1,6 @@
 from flask_restx import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from db import User
+from auth.models import User
 
 # 스키마는 나중에 주입받을 예정
 user_model = None

@@ -2,7 +2,8 @@ from flask import request
 from flask_restx import Resource
 from flask_jwt_extended import create_access_token
 import bcrypt
-from db import db, User
+from core.db import db
+from auth.models import User
 
 # 스키마는 나중에 주입받을 예정
 register_model = None
