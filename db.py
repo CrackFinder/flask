@@ -17,3 +17,19 @@ class User(db.Model):
             'email': self.email,
             'created_at': self.created_at.isoformat()
         }
+
+class Raspberry(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    ip = db.Column(db.String(120), unique=True, nullable=False)
+    port = db.Column(db.String(200), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'ip': self.ip,
+            'port': self.port,
+            'created_at': self.created_at.isoformat()
+        }
