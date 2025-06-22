@@ -19,26 +19,6 @@ def init_raspberry_schemas(schemas):
     raspberry_list_model = schemas['raspberry_list_model']
     response_model = schemas['response_model']
 
-class RaspberryList(Resource):
-    @staticmethod
-    def init(ns):
-        @ns.route('/raspberries')
-        class RaspberryListRoute(RaspberryList):
-            @ns.doc('사용자의 Raspberry 목록 조회', security='Bearer')
-            @ns.response(200, '조회 성공', raspberry_list_model)
-            @ns.response(401, '인증 실패', response_model)
-            @jwt_required()
-            def get(self):
-                """사용자의 Raspberry 목록 조회"""
-                current_user_id = get_jwt_identity()
-                
-                raspberries = Raspberry.query.filter_by(user_id=current_user_id).all()
-                
-                return {
-                    'raspberries': [raspberry.to_dict() for raspberry in raspberries],
-                    'total': len(raspberries)
-                }, 200
-
 class RaspberryCreate(Resource):
     @staticmethod
     def init(ns):
@@ -75,6 +55,22 @@ class RaspberryCreate(Resource):
                 db.session.commit()
                 
                 return new_raspberry.to_dict(), 201
+            
+            @ns.doc('사용자의 Raspberry 목록 조회', security='Bearer')
+            @ns.expect(raspberry_list_model)
+            @ns.response(200, '조회 성공', raspberry_list_model)
+            @ns.response(401, '인증 실패', response_model)
+            @jwt_required()
+            def get(self):
+                """사용자의 Raspberry 목록 조회"""
+                current_user_id = get_jwt_identity()
+                
+                raspberries = Raspberry.query.filter_by(user_id=current_user_id).all()
+                
+                return {
+                    'raspberries': [raspberry.to_dict() for raspberry in raspberries],
+                    'total': len(raspberries)
+                }, 200
 
 class RaspberryDetail(Resource):
     @staticmethod

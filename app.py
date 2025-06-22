@@ -7,7 +7,7 @@ from db import db, User
 from schemas import create_all_schemas
 from routes.auth import Register, Login, init_auth_schemas
 from routes.user import UserInfo, init_user_schemas
-from routes.raspberry import RaspberryList, RaspberryCreate, RaspberryDetail, init_raspberry_schemas
+from routes.raspberry import  RaspberryCreate, RaspberryDetail, init_raspberry_schemas
 import os
 from datetime import timedelta
 
@@ -32,7 +32,7 @@ init_raspberry_schemas(schemas)
 Register.init(ns)
 Login.init(ns)
 UserInfo.init(ns)
-RaspberryList.init(ns)
+#RaspberryList.init(ns)
 RaspberryCreate.init(ns)
 RaspberryDetail.init(ns)
 
