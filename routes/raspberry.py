@@ -22,7 +22,7 @@ def init_raspberry_schemas(schemas):
 class RaspberryCreate(Resource):
     @staticmethod
     def init(ns):
-        @ns.route('/raspberries')
+        @ns.route('/raspberry')
         class RaspberryCreateRoute(RaspberryCreate):
             @ns.doc('Raspberry 생성', security='Bearer')
             @ns.expect(raspberry_create_model)
@@ -75,7 +75,7 @@ class RaspberryCreate(Resource):
 class RaspberryDetail(Resource):
     @staticmethod
     def init(ns):
-        @ns.route('/raspberries/<int:raspberry_id>')
+        @ns.route('/raspberry/<int:raspberry_id>')
         class RaspberryDetailRoute(RaspberryDetail):
             @ns.doc('Raspberry 상세 조회', security='Bearer')
             @ns.response(200, '조회 성공', raspberry_model)

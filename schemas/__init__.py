@@ -2,6 +2,7 @@
 from .user import create_user_schemas
 from .common import create_common_schemas
 from .raspberry import create_raspberry_schemas
+from .pothole import create_pothole_schemas
 
 def create_all_schemas(api):
     """모든 스키마를 생성하고 반환"""
@@ -14,8 +15,10 @@ def create_all_schemas(api):
     
     # Raspberry 스키마 생성
     raspberry_schemas = create_raspberry_schemas(api)
+
+    pothole_schemas = create_pothole_schemas(api)
     
     # 모든 스키마 통합
-    all_schemas = {**user_schemas, **common_schemas, **raspberry_schemas}
+    all_schemas = {**user_schemas, **common_schemas, **raspberry_schemas, **pothole_schemas}
     
     return all_schemas 

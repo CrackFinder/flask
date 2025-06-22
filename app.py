@@ -8,6 +8,7 @@ from schemas import create_all_schemas
 from routes.auth import Register, Login, init_auth_schemas
 from routes.user import UserInfo, init_user_schemas
 from routes.raspberry import  RaspberryCreate, RaspberryDetail, init_raspberry_schemas
+from routes.pothole import PotHoleList, PotHoleCreate, PotHoleDetail, init_pothole_schemas
 import os
 from datetime import timedelta
 
@@ -27,14 +28,17 @@ schemas = create_all_schemas(api)
 init_auth_schemas(schemas)
 init_user_schemas(schemas)
 init_raspberry_schemas(schemas)
+init_pothole_schemas(schemas)
 
 # 라우트 등록
 Register.init(ns)
 Login.init(ns)
 UserInfo.init(ns)
-#RaspberryList.init(ns)
 RaspberryCreate.init(ns)
 RaspberryDetail.init(ns)
+PotHoleList.init(ns)
+PotHoleCreate.init(ns)
+PotHoleDetail.init(ns)
 
 # 설정
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
