@@ -149,5 +149,14 @@ class RaspberryDetail(Resource):
                 db.session.commit()
                 
                 return {'message': 'Raspberry가 삭제되었습니다'}, 200
+
+def init_raspberry_routes(api, schemas):
+    """Raspberry 라우트 초기화"""
+    init_raspberry_schemas(schemas)
     
+    # Raspberry 네임스페이스 생성
+    raspberry_ns = api.namespace('raspberry', description='Raspberry 관련 API')
     
+    # 라우트 등록
+    RaspberryCreate.init(raspberry_ns)
+    RaspberryDetail.init(raspberry_ns) 

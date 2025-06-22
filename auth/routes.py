@@ -88,4 +88,15 @@ class Login(Resource):
                 return {
                     'access_token': access_token,
                     'user': user.to_dict()
-                }, 200 
+                }, 200
+
+def init_auth_routes(api, schemas):
+    """Auth 라우트 초기화"""
+    init_auth_schemas(schemas)
+    
+    # Auth 네임스페이스 생성
+    auth_ns = api.namespace('auth', description='인증 관련 API')
+    
+    # 라우트 등록
+    Register.init(auth_ns)
+    Login.init(auth_ns) 

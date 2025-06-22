@@ -14,9 +14,6 @@ def create_raspberry_schemas(api):
         'created_at': fields.String(readonly=True, description='생성일시')
     })
     
-# POST (라즈베리 추가 ) JSON
-# PUT (라즈베리 수정 ) JSON
-
     # Raspberry 생성 모델
     raspberry_create_model = api.model('RaspberryCreate', {
         'name': fields.String(required=True, description='Raspberry 이름'),
@@ -38,9 +35,16 @@ def create_raspberry_schemas(api):
         'total': fields.Integer(description='총 개수')
     })
     
+    # 일반 응답 모델
+    response_model = api.model('Response', {
+        'message': fields.String(description='응답 메시지'),
+        'error': fields.String(description='에러 메시지')
+    })
+    
     return {
         'raspberry_model': raspberry_model,
         'raspberry_create_model': raspberry_create_model,
         'raspberry_update_model': raspberry_update_model,
-        'raspberry_list_model': raspberry_list_model
-    }
+        'raspberry_list_model': raspberry_list_model,
+        'response_model': response_model
+    } 

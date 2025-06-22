@@ -37,7 +37,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 class PotHoleList(Resource):
     @staticmethod
     def init(ns):
-        @ns.route('/raspberry/potholes')
+        @ns.route('/potholes')
         class PotHoleListRoute(PotHoleList):
             @ns.doc('사용자의 PotHole 목록 조회', security='Bearer')
             @ns.response(200, '조회 성공', pothole_list_model)
@@ -58,7 +58,7 @@ class PotHoleList(Resource):
 class PotHoleCreate(Resource):
     @staticmethod
     def init(ns):
-        @ns.route('/raspberry/potholes')
+        @ns.route('/potholes')
         class PotHoleCreateRoute(PotHoleCreate):
             @ns.doc('PotHole 생성 (이미지 + 위치 정보)', security='Bearer')
             @ns.response(201, '생성 성공', pothole_response_model)
@@ -132,7 +132,7 @@ class PotHoleCreate(Resource):
 class PotHoleDetail(Resource):
     @staticmethod
     def init(ns):
-        @ns.route('/raspberry/potholes/<int:pothole_id>')
+        @ns.route('/potholes/<int:pothole_id>')
         class PotHoleDetailRoute(PotHoleDetail):
             @ns.doc('PotHole 상세 조회', security='Bearer')
             @ns.response(200, '조회 성공', pothole_model)
@@ -241,4 +241,16 @@ class PotHoleDetail(Resource):
                 db.session.delete(pothole)
                 db.session.commit()
                 
-                return {'message': 'PotHole이 삭제되었습니다'}, 200 
+                return {'message': 'PotHole이 삭제되었습니다'}, 200
+
+def init_pothole_routes(api, schemas):
+    """PotHole 라우트 초기화"""
+    init_pothole_schemas(schemas)
+    
+    # PotHole 네임스페이스 생성
+    pothole_ns = api.namespace('pothole', description='PotHole 관련 API')
+    
+    # 라우트 등록
+    PotHoleList.init(pothole_ns)
+    PotHoleCreate.init(pothole_ns)
+    PotHoleDetail.init(pothole_ns) 

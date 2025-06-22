@@ -1,44 +1,22 @@
-from flask import Flask, request, jsonify
+from flask import Flask
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-from flask_restx import Api, Resource, fields
-import bcrypt
-from db import db, User
-from schemas import create_all_schemas
-from routes.auth import Register, Login, init_auth_schemas
-from routes.user import UserInfo, init_user_schemas
-from routes.raspberry import  RaspberryCreate, RaspberryDetail, init_raspberry_schemas
-from routes.pothole import PotHoleList, PotHoleCreate, PotHoleDetail, init_pothole_schemas
+from flask_jwt_extended import JWTManager
+from flask_restx import Api
 import os
 from datetime import timedelta
+from db import db
+
+# 도메인별 모듈 import
+from auth import init_auth_routes, create_auth_schemas
+from user import init_user_routes, create_user_schemas
+from raspberry import init_raspberry_routes, create_raspberry_schemas
+from pothole import init_pothole_routes, create_pothole_schemas
 
 app = Flask(__name__)
 CORS(app)
 
 # Flask-RESTX 설정
-api = Api(app, version='1.0', title='Flask API', description='Flask API 문서')
-
-# 네임스페이스 생성
-ns = api.namespace('api', description='API 엔드포인트')
-
-# 스키마 생성
-schemas = create_all_schemas(api)
-
-# 스키마 초기화
-init_auth_schemas(schemas)
-init_user_schemas(schemas)
-init_raspberry_schemas(schemas)
-init_pothole_schemas(schemas)
-
-# 라우트 등록
-Register.init(ns)
-Login.init(ns)
-UserInfo.init(ns)
-RaspberryCreate.init(ns)
-RaspberryDetail.init(ns)
-PotHoleList.init(ns)
-PotHoleCreate.init(ns)
-PotHoleDetail.init(ns)
+api = Api(app, version='1.0', title='라즈베리파이 Pothole API', description='Pothole API 문서')
 
 # 설정
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -49,6 +27,25 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 # 초기화
 db.init_app(app)
 jwt = JWTManager(app)
+
+# 스키마 생성 및 라우트 초기화
+def init_app():
+    """앱 초기화"""
+    # 모든 스키마 생성
+    all_schemas = {}
+    all_schemas.update(create_auth_schemas(api))
+    all_schemas.update(create_user_schemas(api))
+    all_schemas.update(create_raspberry_schemas(api))
+    all_schemas.update(create_pothole_schemas(api))
+    
+    # 도메인별 라우트 초기화
+    init_auth_routes(api, all_schemas)
+    init_user_routes(api, all_schemas)
+    init_raspberry_routes(api, all_schemas)
+    init_pothole_routes(api, all_schemas)
+
+# 앱 초기화
+init_app()
 
 # 데이터베이스 생성
 with app.app_context():

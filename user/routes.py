@@ -30,4 +30,14 @@ class UserInfo(Resource):
                 if not user:
                     return {'error': '사용자를 찾을 수 없습니다'}, 404
                 
-                return user.to_dict(), 200 
+                return user.to_dict(), 200
+
+def init_user_routes(api, schemas):
+    """User 라우트 초기화"""
+    init_user_schemas(schemas)
+    
+    # User 네임스페이스 생성
+    user_ns = api.namespace('user', description='사용자 관련 API')
+    
+    # 라우트 등록
+    UserInfo.init(user_ns) 
