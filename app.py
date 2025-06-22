@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+#from flask_restx import Api, Resource
+from flasgger import Swagger, swag_from
 import bcrypt
 from db import db, User
 import os
@@ -8,6 +10,26 @@ from datetime import timedelta
 
 app = Flask(__name__)
 CORS(app)
+#api = Api(app, version='1.0', title='API 문서', description='API 문서')
+#ns = api.namespace('api', description='API 문서')
+
+# Flasgger 설정 - 기본 설정
+swagger = Swagger(app, template={
+    "swagger": "2.0",
+    "info": {
+        "title": "Flask API",
+        "description": "Flask API 문서",
+        "version": "1.0.0"
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\""
+        }
+    }
+})
 
 # 설정
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -24,7 +46,48 @@ with app.app_context():
     db.create_all()
 
 @app.route('/api/register', methods=['POST'])
+#@swag_from('swagger_docs.yml', endpoint='register')
 def register():
+    """회원가입 API
+    ---
+    tags:
+      - 인증
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - username
+            - email
+            - password
+          properties:
+            username:
+              type: string
+              description: 사용자명
+            email:
+              type: string
+              description: 이메일 주소
+            password:
+              type: string
+              description: 비밀번호
+    responses:
+      201:
+        description: 회원가입 성공
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+      400:
+        description: 잘못된 요청
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
     data = request.get_json()
     
     # 필수 필드 확인
@@ -55,7 +118,9 @@ def register():
     return jsonify({'message': '회원가입이 완료되었습니다'}), 201
 
 @app.route('/api/login', methods=['POST'])
+@swag_from('swagger_docs.yml', endpoint='login')
 def login():
+    """로그인 API"""
     data = request.get_json()
     
     if not all(k in data for k in ['email', 'password']):
@@ -69,6 +134,7 @@ def login():
     # JWT 토큰 생성
     print(f'userid {user.id} {type(user.id)}')
     access_token = create_access_token(identity=f'{user.id}')
+    print(f'토큰 : {access_token}')
     
     return jsonify({
         'access_token': access_token,
@@ -77,7 +143,9 @@ def login():
 
 @app.route('/api/user', methods=['GET'])
 @jwt_required()
+@swag_from('swagger_docs.yml', endpoint='get_user')
 def get_user():
+    """사용자 정보 조회 API"""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
     
