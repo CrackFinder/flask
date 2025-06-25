@@ -3,7 +3,7 @@ from core.db import db
 
 class PotHole(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    image_path = db.Column(db.String(500), nullable=False)
+    video_path = db.Column(db.String(500), nullable=False)
     address = db.Column(db.String(200), nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
@@ -16,7 +16,7 @@ class PotHole(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'image_path': self.image_path,
+            'video_path': self.video_path,
             'address': self.address,
             'latitude': self.latitude,
             'longitude': self.longitude,

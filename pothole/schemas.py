@@ -6,7 +6,7 @@ def create_pothole_schemas(api):
     # 기본 PotHole 모델
     pothole_model = api.model('PotHole', {
         'id': fields.Integer(readonly=True, description='PotHole ID'),
-        'image_path': fields.String(required=True, description='이미지 파일 경로'),
+        'video_path': fields.String(required=True, description='동영상 파일 경로'),
         'address': fields.String(required=True, description='주소'),
         'latitude': fields.Float(required=True, description='GPS 위도'),
         'longitude': fields.Float(required=True, description='GPS 경도'),
@@ -15,7 +15,7 @@ def create_pothole_schemas(api):
         'updated_at': fields.String(readonly=True, description='수정일시')
     })
 
-    # PotHole 생성 모델 (이미지 + 위치 정보)
+    # PotHole 생성 모델 (동영상 + 위치 정보)
     pothole_create_model = api.model('PotHoleCreate', {
         'address': fields.String(required=True, description='주소'),
         'latitude': fields.Float(required=True, description='GPS 위도'),
@@ -39,7 +39,7 @@ def create_pothole_schemas(api):
     pothole_response_model = api.model('PotHoleResponse', {
         'message': fields.String(description='응답 메시지'),
         'pothole': fields.Nested(pothole_model, description='PotHole 정보'),
-        'image_info': fields.Raw(description='이미지 정보 (파일명, 크기 등)')
+        'video_info': fields.Raw(description='동영상 정보 (파일명, 크기 등)')
     })
 
     # 일반 응답 모델

@@ -5,6 +5,7 @@ import bcrypt
 from core.db import db
 from auth.models import User
 
+
 # 스키마는 나중에 주입받을 예정
 register_model = None
 login_model = None
@@ -77,7 +78,10 @@ class Login(Resource):
                     return {'error': '이메일과 비밀번호를 입력해주세요'}, 400
                 
                 user = User.query.filter_by(email=data['email']).first()
-                
+                print(f'user : {user}')
+                print(f'user.password : {user.password}')
+                print(f'data["password"] : {data["password"]}')
+
                 if not user or not bcrypt.checkpw(data['password'].encode('utf-8'), user.password.encode('utf-8')):
                     return {'error': '이메일 또는 비밀번호가 올바르지 않습니다'}, 401
                 
