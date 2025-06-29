@@ -64,6 +64,7 @@ class PotHoleCreate(Resource):
         @ns.route('/potholes')
         class PotHoleCreateRoute(PotHoleCreate):
             @ns.doc('PotHole 생성 (동영상 + 위치 정보)', security='Bearer')
+            @ns.expect(pothole_create_model)
             @ns.response(201, '생성 성공', pothole_response_model)
             @ns.response(400, '잘못된 요청', response_model)
             @ns.response(401, '인증 실패', response_model)
@@ -79,7 +80,7 @@ class PotHoleCreate(Resource):
                 address = request.form.get('address')
                 latitude = request.form.get('latitude')
                 longitude = request.form.get('longitude')
-                
+
                 # 필수 필드 확인
                 if not all([raspberry_id, address, latitude, longitude]):
                     return {'error': 'raspberry_id, address, latitude, longitude는 필수입니다'}, 400
@@ -88,11 +89,11 @@ class PotHoleCreate(Resource):
                 if 'video' not in request.files:
                     return {'error': '동영상 파일이 필요합니다'}, 400
                 
-                file = request.files['video']
-                if file.filename == '':
+                video_file = request.files['video']
+                if video_file.filename == '':
                     return {'error': '선택된 파일이 없습니다'}, 400
                 
-                if not allowed_file(file.filename):
+                if not allowed_file(video_file.filename):
                     return {'error': '허용되지 않는 파일 형식입니다 (mp4, avi, mov, wmv, flv, webm, mkv만 가능)'}, 400
                 
                 # Raspberry가 사용자의 것인지 확인
@@ -112,12 +113,12 @@ class PotHoleCreate(Resource):
                 db.session.flush()  # ID 생성을 위해 flush
                 
                 # 동영상 파일 저장
-                filename = secure_filename(file.filename)
+                filename = secure_filename(video_file.filename)
                 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
                 new_filename = f"pothole_{new_pothole.id}_{timestamp}_{filename}"
                 file_path = os.path.join(UPLOAD_FOLDER, new_filename)
                 
-                file.save(file_path)
+                video_file.save(file_path)
                 
                 # 동영상 경로 업데이트
                 new_pothole.video_path = file_path

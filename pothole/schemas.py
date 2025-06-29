@@ -15,8 +15,10 @@ def create_pothole_schemas(api):
         'updated_at': fields.String(readonly=True, description='수정일시')
     })
 
-    # PotHole 생성 모델 (동영상 + 위치 정보)
+    # PotHole 생성 모델 (동영상 + 위치 정보). 라즈베리파이에서 포트홀 비디오 하나나를 추가할때 사용
     pothole_create_model = api.model('PotHoleCreate', {
+        'video': fields.Raw(required=True, description='동영상 파일 (multipart/form-data)'),
+        'raspberry_id': fields.String(required=True, description='Raspberry ID'),
         'address': fields.String(required=True, description='주소'),
         'latitude': fields.Float(required=True, description='GPS 위도'),
         'longitude': fields.Float(required=True, description='GPS 경도')
@@ -24,6 +26,7 @@ def create_pothole_schemas(api):
 
     # PotHole 수정 모델 (선택적 필드)
     pothole_update_model = api.model('PotHoleUpdate', {
+        'video': fields.Raw(description='동영상 파일 (multipart/form-data, 선택사항)'),
         'address': fields.String(description='주소'),
         'latitude': fields.Float(description='GPS 위도'),
         'longitude': fields.Float(description='GPS 경도')
