@@ -226,18 +226,18 @@ class PotHoleDetail(Resource):
             @ns.response(200, '삭제 성공', response_model)
             @ns.response(401, '인증 실패', response_model)
             @ns.response(404, 'PotHole을 찾을 수 없음', response_model)
-            @jwt_required()
+            #@jwt_required()
             def delete(self, pothole_id):
                 """PotHole 삭제"""
-                current_user_id = get_jwt_identity()
+                # current_user_id = get_jwt_identity()
                 
-                pothole = db.session.query(PotHole).join(Raspberry).filter(
-                    PotHole.id == pothole_id,
-                    Raspberry.user_id == current_user_id
-                ).first()
+                # pothole = db.session.query(PotHole).join(Raspberry).filter(
+                #     PotHole.id == pothole_id,
+                #     Raspberry.user_id == current_user_id
+                # ).first()
                 
-                if not pothole:
-                    return {'error': 'PotHole을 찾을 수 없습니다'}, 404
+                # if not pothole:
+                #     return {'error': 'PotHole을 찾을 수 없습니다'}, 404
                 
                 # 동영상 파일 삭제
                 if pothole.video_path and os.path.exists(pothole.video_path):
