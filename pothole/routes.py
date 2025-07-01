@@ -8,6 +8,7 @@ from core.db import db
 from auth.models import User
 from raspberry.models import Raspberry
 from pothole.models import PotHole
+import json
 
 # 스키마는 나중에 주입받을 예정
 pothole_model = None
@@ -69,18 +70,18 @@ class PotHoleCreate(Resource):
             @ns.response(400, '잘못된 요청', response_model)
             @ns.response(401, '인증 실패', response_model)
             @ns.response(404, 'Raspberry를 찾을 수 없음', response_model)
-            #@jwt_required()
             def post(self):
                 
                 """PotHole 생성 (동영상 파일 + 위치 정보)"""
-                # current_user_id = get_jwt_identity()
-                current_user_id = 1 # TODO: 테스트용
 
                 # 폼 데이터에서 정보 추출
-                raspberry_id = request.form.get('raspberry_id')
-                address = request.form.get('address')
-                latitude = request.form.get('latitude')
-                longitude = request.form.get('longitude')
+                json_data = json.loads(request.form.get('json'))
+                print('json', json_data, type(json_data))
+                print('json.get("raspberry_id")',json_data["raspberry_id"])
+                raspberry_id = json_data['raspberry_id']
+                address = json_data['address']
+                latitude = json_data['latitude']
+                longitude = json_data['longitude']
 
                 # 필수 필드 확인
                 if not all([raspberry_id, address, latitude, longitude]):
@@ -98,10 +99,7 @@ class PotHoleCreate(Resource):
                     return {'error': '허용되지 않는 파일 형식입니다 (mp4, avi, mov, wmv, flv, webm, mkv만 가능)'}, 400
                 
                 # Raspberry가 사용자의 것인지 확인
-                raspberry = Raspberry.query.filter_by(id=raspberry_id, user_id=current_user_id).first()
-                if not raspberry:
-                    return {'error': 'Raspberry를 찾을 수 없습니다'}, 404
-                
+
                 # 새 PotHole 생성
                 new_pothole = PotHole(
                     address=address,

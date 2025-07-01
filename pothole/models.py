@@ -3,7 +3,7 @@ from core.db import db
 
 class PotHole(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    video_path = db.Column(db.String(500), nullable=False)
+    video_path = db.Column(db.String(500), nullable=True)
     address = db.Column(db.String(200), nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
