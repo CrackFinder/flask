@@ -41,7 +41,7 @@ def init_app():
     all_schemas.update(create_auth_schemas(api))
     all_schemas.update(create_user_schemas(api))
     all_schemas.update(create_raspberry_schemas(api))
-    all_schemas.update(create_pothole_schemas(api))
+    #all_schemas.update(create_pothole_schemas(api))
     
     # 도메인별 라우트 초기화
     init_auth_routes(api, all_schemas)
