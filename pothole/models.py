@@ -11,7 +11,7 @@ class PotHole(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Raspberry 외래키
-    raspberry_id = db.Column(db.Integer, db.ForeignKey('raspberry.id'), nullable=False)
+    raspberry_id = db.Column(db.String(50), db.ForeignKey('raspberry.id'), nullable=False)
 
     def to_dict(self):
         return {

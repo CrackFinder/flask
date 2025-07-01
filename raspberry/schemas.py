@@ -5,7 +5,7 @@ def create_raspberry_schemas(api):
     
     # 기본 Raspberry 모델
     raspberry_model = api.model('Raspberry', {
-        'id': fields.Integer(readonly=True, description='Raspberry ID'),
+        'id': fields.String(readonly=True, description='Raspberry ID'),
         'name': fields.String(required=True, description='Raspberry 이름'),
         'ip': fields.String(required=True, description='IP 주소'),
         'port': fields.Integer(required=True, description='포트 번호'),
@@ -16,6 +16,7 @@ def create_raspberry_schemas(api):
     
     # Raspberry 생성 모델
     raspberry_create_model = api.model('RaspberryCreate', {
+        'id': fields.String(required=True, description='Raspberry ID'),
         'name': fields.String(required=True, description='Raspberry 이름'),
         'ip': fields.String(required=True, description='IP 주소'),
         'port': fields.Integer(required=True, description='포트 번호')

@@ -10,7 +10,7 @@ def create_pothole_schemas(api):
         'address': fields.String(required=True, description='주소'),
         'latitude': fields.Float(required=True, description='GPS 위도'),
         'longitude': fields.Float(required=True, description='GPS 경도'),
-        'raspberry_id': fields.Integer(required=True, description='Raspberry ID'),
+        'raspberry_id': fields.String(required=True, description='Raspberry ID'),
         'created_at': fields.String(readonly=True, description='생성일시'),
         'updated_at': fields.String(readonly=True, description='수정일시')
     })

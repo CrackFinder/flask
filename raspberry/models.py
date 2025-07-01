@@ -2,7 +2,7 @@ from datetime import datetime
 from core.db import db
 
 class Raspberry(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(50), primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     ip = db.Column(db.String(120), nullable=False)
     port = db.Column(db.Integer, nullable=False)

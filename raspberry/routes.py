@@ -38,8 +38,12 @@ class RaspberryCreate(Resource):
                 data = request.get_json()
                 
                 # 필수 필드 확인
-                if not all(k in data for k in ['name', 'ip', 'port']):
-                    return {'error': '모든 필드를 입력해주세요'}, 400
+                if not all(k in data for k in ['id', 'name', 'ip', 'port']):
+                    return {'error': 'id, name, ip, port는 필수입니다'}, 400
+                
+                # ID 중복 확인
+                if Raspberry.query.filter_by(id=data['id']).first():
+                    return {'error': '이미 존재하는 ID입니다'}, 400
                 
                 # 같은 사용자의 중복 이름 확인
                 if Raspberry.query.filter_by(user_id=current_user_id, name=data['name']).first():
@@ -47,6 +51,7 @@ class RaspberryCreate(Resource):
                 
                 # 새 Raspberry 생성
                 new_raspberry = Raspberry(
+                    id=data['id'],
                     name=data['name'],
                     ip=data['ip'],
                     port=data['port'],
@@ -77,7 +82,7 @@ class RaspberryCreate(Resource):
 class RaspberryDetail(Resource):
     @staticmethod
     def init(ns):
-        @ns.route('/raspberry/<int:raspberry_id>')
+        @ns.route('/raspberry/<string:raspberry_id>')
         class RaspberryDetailRoute(RaspberryDetail):
             @ns.doc('Raspberry 상세 조회', security='Bearer')
             @ns.response(200, '조회 성공', raspberry_model)

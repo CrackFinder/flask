@@ -76,8 +76,6 @@ class PotHoleCreate(Resource):
 
                 # 폼 데이터에서 정보 추출
                 json_data = json.loads(request.form.get('json'))
-                print('json', json_data, type(json_data))
-                print('json.get("raspberry_id")',json_data["raspberry_id"])
                 raspberry_id = json_data['raspberry_id']
                 address = json_data['address']
                 latitude = json_data['latitude']
@@ -105,7 +103,7 @@ class PotHoleCreate(Resource):
                     address=address,
                     latitude=float(latitude),
                     longitude=float(longitude),
-                    raspberry_id=int(raspberry_id)
+                    raspberry_id=raspberry_id
                 )
                 
                 db.session.add(new_pothole)
