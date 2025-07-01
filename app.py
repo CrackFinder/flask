@@ -35,18 +35,21 @@ jwt = JWTManager(app)
 
 # 스키마 생성 및 라우트 초기화
 def init_app():
+    from copy import deepcopy
     """앱 초기화"""
     # 모든 스키마 생성
-    all_schemas = {}
-    all_schemas.update(create_auth_schemas(api))
-    all_schemas.update(create_user_schemas(api))
-    all_schemas.update(create_raspberry_schemas(api))
-    #all_schemas.update(create_pothole_schemas(api))
+    auth_schemas = {}
+    auth_schemas.update(create_auth_schemas(api))
+    auth_schemas.update(create_user_schemas(api))
+    auth_schemas.update(create_raspberry_schemas(api))
     
     # 도메인별 라우트 초기화
-    init_auth_routes(api, all_schemas)
-    init_user_routes(api, all_schemas)
-    init_raspberry_routes(api, all_schemas)
+    init_auth_routes(api, auth_schemas)
+    init_user_routes(api, auth_schemas)
+    init_raspberry_routes(api, auth_schemas)
+    
+    all_schemas = deepcopy(auth_schemas)
+    all_schemas.update(create_pothole_schemas(api))
     init_pothole_routes(api, all_schemas)
 
 # 앱 초기화
