@@ -60,8 +60,6 @@ def init_app():
     init_pothole_routes(api, all_schemas)
     
     # 스케줄러 초기화
-    from raspberry.scheduler import init_scheduler
-    init_scheduler(scheduler)
 
 # 앱 초기화
 init_app()
@@ -70,7 +68,9 @@ init_app()
 with app.app_context():
     db.create_all()
 
-# 스케줄러 시작
+# 스케줄러 초기화 및 시작
+from raspberry.scheduler import init_scheduler
+init_scheduler(scheduler)
 scheduler.start()
 
 if __name__ == '__main__':

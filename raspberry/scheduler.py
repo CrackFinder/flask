@@ -56,7 +56,10 @@ class RaspberryHealthChecker:
     def check_all_raspberries(self):
         """모든 라즈베리파이 상태 체크"""
         try:
-            with current_app.app_context():
+            # Flask 앱 인스턴스 가져오기
+            from app import app
+            
+            with app.app_context():
                 raspberries = Raspberry.query.all()
                 
                 for raspberry in raspberries:
@@ -73,7 +76,7 @@ class RaspberryHealthChecker:
                         success_count=result['success_count'],
                         error_message=result['error_message']
                     )
-                    
+                    print('상태체크 결과:', status_check)
                     db.session.add(status_check)
                     
                     # 라즈베리파이 상태 업데이트
@@ -90,18 +93,25 @@ class RaspberryHealthChecker:
                 
         except Exception as e:
             print(f"Error during status check: {str(e)}")
-            db.session.rollback()
+            # 애플리케이션 컨텍스트 내에서만 rollback 시도
+            try:
+                from app import app
+                with app.app_context():
+                    db.session.rollback()
+            except:
+                pass
 
 def init_scheduler(scheduler):
     """스케줄러 초기화"""
     checker = RaspberryHealthChecker()
     
+    print('작업등록')
     # 1분마다 상태 체크 작업 등록
     scheduler.add_job(
         id='raspberry_health_check',
         func=checker.check_all_raspberries,
         trigger='interval',
-        minutes=1,
+        seconds=5,
         replace_existing=True
     )
     
