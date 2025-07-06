@@ -34,7 +34,7 @@ class RaspberryCreate(Resource):
             @jwt_required()
             def post(self):
                 """Raspberry 생성"""
-                current_user_id = get_jwt_identity()
+                current_user_id = int(get_jwt_identity())
                 data = request.get_json()
                 
                 # 필수 필드 확인
