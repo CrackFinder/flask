@@ -3,22 +3,26 @@ from flask_restx import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from core.db import db
 from auth.models import User
-from raspberry.models import Raspberry
+from raspberry.models import Raspberry, RaspberryStatus
 
 # 스키마는 나중에 주입받을 예정
 raspberry_model = None
 raspberry_create_model = None
 raspberry_update_model = None
 raspberry_list_model = None
+raspberry_status_model = None
+raspberry_status_list_model = None
 response_model = None
 
 def init_raspberry_schemas(schemas):
     """스키마 초기화"""
-    global raspberry_model, raspberry_create_model, raspberry_update_model, raspberry_list_model, response_model
+    global raspberry_model, raspberry_create_model, raspberry_update_model, raspberry_list_model, raspberry_status_model, raspberry_status_list_model, response_model
     raspberry_model = schemas['raspberry_model']
     raspberry_create_model = schemas['raspberry_create_model']
     raspberry_update_model = schemas['raspberry_update_model']
     raspberry_list_model = schemas['raspberry_list_model']
+    raspberry_status_model = schemas['raspberry_status_model']
+    raspberry_status_list_model = schemas['raspberry_status_list_model']
     response_model = schemas['response_model']
 
 class RaspberryCreate(Resource):
@@ -157,6 +161,42 @@ class RaspberryDetail(Resource):
                 
                 return {'message': 'Raspberry가 삭제되었습니다'}, 200
 
+class RaspberryStatusHistory(Resource):
+    @staticmethod
+    def init(ns):
+        @ns.route('/raspberry/<string:raspberry_id>/status')
+        class RaspberryStatusHistoryRoute(RaspberryStatusHistory):
+            @ns.doc('Raspberry 상태 체크 이력 조회', security='Bearer')
+            @ns.response(200, '조회 성공', raspberry_status_list_model)
+            @ns.response(401, '인증 실패', response_model)
+            @ns.response(404, 'Raspberry를 찾을 수 없음', response_model)
+            @jwt_required()
+            def get(self, raspberry_id):
+                """Raspberry 상태 체크 이력 조회"""
+                current_user_id = get_jwt_identity()
+                
+                # 사용자의 Raspberry인지 확인
+                raspberry = Raspberry.query.filter_by(id=raspberry_id, user_id=current_user_id).first()
+                if not raspberry:
+                    return {'error': 'Raspberry를 찾을 수 없습니다'}, 404
+                
+                # 최근 24시간의 상태 체크 결과 조회 (최대 100개)
+                from datetime import datetime, timedelta
+                yesterday = datetime.utcnow() - timedelta(days=1)
+                
+                status_checks = RaspberryStatus.query.filter_by(raspberry_id=raspberry_id)\
+                    .filter(RaspberryStatus.checked_at >= yesterday)\
+                    .order_by(RaspberryStatus.checked_at.desc())\
+                    .limit(100)\
+                    .all()
+                
+                return {
+                    'raspberry_id': raspberry_id,
+                    'raspberry_name': raspberry.name,
+                    'status_checks': [status.to_dict() for status in status_checks],
+                    'total': len(status_checks)
+                }, 200
+
 def init_raspberry_routes(api, schemas):
     """Raspberry 라우트 초기화"""
     init_raspberry_schemas(schemas)
@@ -166,4 +206,5 @@ def init_raspberry_routes(api, schemas):
     
     # 라우트 등록
     RaspberryCreate.init(raspberry_ns)
-    RaspberryDetail.init(raspberry_ns) 
+    RaspberryDetail.init(raspberry_ns)
+    RaspberryStatusHistory.init(raspberry_ns) 
