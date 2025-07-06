@@ -69,9 +69,10 @@ with app.app_context():
     db.create_all()
 
 # 스케줄러 초기화 및 시작
-from raspberry.scheduler import init_scheduler
-init_scheduler(scheduler)
-scheduler.start()
+
 
 if __name__ == '__main__':
+    from raspberry.scheduler import init_scheduler
+    init_scheduler(scheduler)
+    scheduler.start()
     app.run(host='0.0.0.0', port=5000, debug=True)

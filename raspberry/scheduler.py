@@ -1,5 +1,7 @@
 import requests
 import time
+import subprocess
+import platform
 from datetime import datetime
 from flask import current_app
 from core.db import db
@@ -14,29 +16,41 @@ class RaspberryHealthChecker:
     
     def ping_raspberry(self, ip, port):
         """라즈베리파이에 ping 요청"""
-        url = f"http://{ip}:{port}/health"
         success_count = 0
         total_response_time = 0
         error_message = None
         
+        # OS별 ping 명령어 결정
+        if platform.system().lower() == "windows":
+            ping_cmd = ["ping", "-n", "1", "-w", str(self.timeout * 1000), ip]
+        else:
+            ping_cmd = ["ping", "-c", "1", "-W", str(self.timeout), ip]
+        
         for attempt in range(self.max_retries):
             try:
                 start_time = time.time()
-                response = requests.get(url, timeout=self.timeout)
+                
+                # ping 명령어 실행
+                result = subprocess.run(
+                    ping_cmd,
+                    capture_output=True,
+                    text=True,
+                    timeout=self.timeout + 1
+                )
+                
                 response_time = time.time() - start_time
                 
-                if response.status_code == 200:
+                # ping 성공 여부 확인
+                if result.returncode == 0:
                     success_count += 1
                     total_response_time += response_time
                 else:
-                    error_message = f"HTTP {response.status_code}"
+                    error_message = f"Ping failed (return code: {result.returncode})"
                     
-            except requests.exceptions.Timeout:
+            except subprocess.TimeoutExpired:
                 error_message = "Timeout"
-            except requests.exceptions.ConnectionError:
-                error_message = "Connection Error"
-            except requests.exceptions.RequestException as e:
-                error_message = str(e)
+            except subprocess.SubprocessError as e:
+                error_message = f"Subprocess error: {str(e)}"
             except Exception as e:
                 error_message = f"Unexpected error: {str(e)}"
         
@@ -111,7 +125,7 @@ def init_scheduler(scheduler):
         id='raspberry_health_check',
         func=checker.check_all_raspberries,
         trigger='interval',
-        seconds=5,
+        seconds=15,
         replace_existing=True
     )
     
