@@ -1,7 +1,10 @@
 from flask_restx import fields
+from pothole.schemas import create_pothole_schemas
 
 def create_raspberry_schemas(api):
     """Raspberry 관련 스키마들을 생성"""
+
+    pothole_model = create_pothole_schemas(api)['pothole_model']
     
     # 기본 Raspberry 모델
     raspberry_model = api.model('Raspberry', {
@@ -11,7 +14,8 @@ def create_raspberry_schemas(api):
         'port': fields.Integer(required=True, description='포트 번호'),
         'status': fields.String(description='상태 (online/offline)'),
         'user_id': fields.Integer(required=True, description='소유자 ID'),
-        'created_at': fields.String(readonly=True, description='생성일시')
+        'created_at': fields.String(readonly=True, description='생성일시'),
+        'potholes': fields.List(fields.Nested(pothole_model), description='PotHole 목록')
     })
     
     # Raspberry 생성 모델

@@ -26,7 +26,8 @@ class Raspberry(db.Model):
             'port': self.port,
             'status': self.status,
             'user_id': self.user_id,
-            'created_at': self.created_at.isoformat()
+            'created_at': self.created_at.isoformat(),
+            'potholes': [pothole.to_dict() for pothole in self.potholes]
         }
 
 class RaspberryStatus(db.Model):
