@@ -14,16 +14,18 @@ import json
 pothole_model = None
 pothole_create_model = None
 pothole_update_model = None
+pothole_status_update_model = None
 pothole_list_model = None
 pothole_response_model = None
 response_model = None
 
 def init_pothole_schemas(schemas):
     """스키마 초기화"""
-    global pothole_model, pothole_create_model, pothole_update_model, pothole_list_model, pothole_response_model, response_model
+    global pothole_model, pothole_create_model, pothole_update_model, pothole_status_update_model, pothole_list_model, pothole_response_model, response_model
     pothole_model = schemas['pothole_model']
     pothole_create_model = schemas['pothole_create_model']
     pothole_update_model = schemas['pothole_update_model']
+    pothole_status_update_model = schemas['pothole_status_update_model']
     pothole_list_model = schemas['pothole_list_model']
     pothole_response_model = schemas['pothole_response_model']
     response_model = schemas['response_model']
@@ -246,6 +248,50 @@ class PotHoleDetail(Resource):
                 
                 return {'message': 'PotHole이 성공적으로 삭제되었습니다'}, 200
 
+class PotHoleStatusUpdate(Resource):
+    @staticmethod
+    def init(ns):
+        @ns.route('/potholes/<int:pothole_id>/status')
+        class PotHoleStatusUpdateRoute(PotHoleStatusUpdate):
+            @ns.doc('PotHole 상태 업데이트', security='Bearer')
+            @ns.expect(pothole_status_update_model)
+            @ns.response(200, '상태 업데이트 성공', pothole_response_model)
+            @ns.response(400, '잘못된 요청', response_model)
+            @ns.response(401, '인증 실패', response_model)
+            @ns.response(404, 'PotHole을 찾을 수 없음', response_model)
+            @jwt_required()
+            def put(self, pothole_id):
+                """PotHole 상태 업데이트 (처리완료/미처리)"""
+                current_user_id = get_jwt_identity()
+                
+                # 요청 데이터 확인
+                data = request.get_json()
+                if not data or 'status' not in data:
+                    return {'error': 'status 필드가 필요합니다'}, 400
+                
+                status = data['status']
+                if status not in ['처리완료', '미처리']:
+                    return {'error': 'status는 "처리완료" 또는 "미처리"여야 합니다'}, 400
+                
+                # PotHole 조회
+                pothole = db.session.query(PotHole).join(Raspberry).filter(
+                    PotHole.id == pothole_id,
+                    Raspberry.user_id == current_user_id
+                ).first()
+                
+                if not pothole:
+                    return {'error': 'PotHole을 찾을 수 없습니다'}, 404
+                
+                # 상태 업데이트
+                pothole.status = status
+                db.session.commit()
+                
+                return {
+                    'message': f'PotHole 상태가 "{status}"로 업데이트되었습니다',
+                    'pothole': pothole.to_dict(),
+                    'video_info': None
+                }, 200
+
 def init_pothole_routes(api, schemas):
     """PotHole 라우트 초기화"""
     init_pothole_schemas(schemas)
@@ -256,4 +302,5 @@ def init_pothole_routes(api, schemas):
     # 라우트 등록
     PotHoleList.init(pothole_ns)
     PotHoleCreate.init(pothole_ns)
-    PotHoleDetail.init(pothole_ns) 
+    PotHoleDetail.init(pothole_ns)
+    PotHoleStatusUpdate.init(pothole_ns) 
