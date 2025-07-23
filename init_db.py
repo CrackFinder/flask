@@ -58,7 +58,7 @@ def init_database():
             if user and raspberry:
                 # 포트홀 1 생성
                 pothole1 = PotHole(
-                    video_path='uploads/potholes/sample_pothole_1.mp4',
+                    video_path='uploads/potholes/sample_pothole_1.png',
                     address='서울특별시 강남구 테헤란로 123',
                     latitude=37.5665,
                     longitude=126.9780,
@@ -67,7 +67,7 @@ def init_database():
                 
                 # 포트홀 2 생성
                 pothole2 = PotHole(
-                    video_path='uploads/potholes/sample_pothole_2.mp4',
+                    video_path='uploads/potholes/sample_pothole_2.png',
                     address='서울특별시 서초구 서초대로 456',
                     latitude=37.5013,
                     longitude=127.0246,

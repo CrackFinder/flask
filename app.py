@@ -12,6 +12,7 @@ from auth import init_auth_routes, create_auth_schemas
 from user import init_user_routes, create_user_schemas
 from raspberry import init_raspberry_routes, create_raspberry_schemas
 from pothole import init_pothole_routes, create_pothole_schemas
+from uploads import init_uploads_routes
 
 # 도메인별 모델 import (side-effect용)
 from auth.models import User
@@ -58,6 +59,7 @@ def init_app():
     all_schemas = deepcopy(auth_schemas)
     all_schemas.update(create_pothole_schemas(api))
     init_pothole_routes(api, all_schemas)
+    init_uploads_routes(api, all_schemas)
     
     # 스케줄러 초기화
 
