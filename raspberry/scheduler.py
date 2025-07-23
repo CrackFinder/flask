@@ -13,60 +13,49 @@ class RaspberryHealthChecker:
     def __init__(self):
         self.timeout = 5  # 5초 타임아웃
         self.max_retries = 4  # 최대 4회 시도
-    
-    def ping_raspberry(self, ip, port):
-        """라즈베리파이에 ping 요청"""
+
+    def health_check_request(self, ip, port):
+        """라즈베리파이 /healthz 엔드포인트로 상태 체크"""
+        url = f"http://{ip}:{port}/healthz"
         success_count = 0
         total_response_time = 0
         error_message = None
-        
-        # OS별 ping 명령어 결정
-        if platform.system().lower() == "windows":
-            ping_cmd = ["ping", "-n", "1", "-w", str(self.timeout * 1000), ip]
-        else:
-            ping_cmd = ["ping", "-c", "1", "-W", str(self.timeout), ip]
-        
+
         for attempt in range(self.max_retries):
             try:
                 start_time = time.time()
-                
-                # ping 명령어 실행
-                result = subprocess.run(
-                    ping_cmd,
-                    capture_output=True,
-                    text=True,
-                    timeout=self.timeout + 1
-                )
-                
+                response = requests.get(url, timeout=self.timeout)
                 response_time = time.time() - start_time
-                
-                # ping 성공 여부 확인
-                if result.returncode == 0:
-                    success_count += 1
-                    total_response_time += response_time
+
+                if response.status_code == 200:
+                    try:
+                        data = response.json()
+                        if data.get('status') == 'ok':
+                            success_count += 1
+                            total_response_time += response_time
+                        else:
+                            error_message = f"Invalid status: {data.get('status')}"
+                    except Exception as e:
+                        error_message = f"JSON decode error: {str(e)}"
                 else:
-                    error_message = f"Ping failed (return code: {result.returncode})"
-                    
-            except subprocess.TimeoutExpired:
+                    error_message = f"HTTP {response.status_code}"
+            except requests.Timeout:
                 error_message = "Timeout"
-            except subprocess.SubprocessError as e:
-                error_message = f"Subprocess error: {str(e)}"
+            except requests.RequestException as e:
+                error_message = f"Request error: {str(e)}"
             except Exception as e:
                 error_message = f"Unexpected error: {str(e)}"
-        
-        # 평균 응답 시간 계산
+
         avg_response_time = total_response_time / success_count if success_count > 0 else None
-        
-        # 50% 이상 성공하면 온라인으로 판단
         is_online = success_count >= (self.max_retries // 2)
-        
+
         return {
             'is_online': is_online,
             'success_count': success_count,
             'response_time': avg_response_time,
             'error_message': error_message if success_count == 0 else None
         }
-    
+
     def check_all_raspberries(self):
         """모든 라즈베리파이 상태 체크"""
         try:
@@ -80,7 +69,7 @@ class RaspberryHealthChecker:
                     print(f"Checking {raspberry.name} ({raspberry.ip}:{raspberry.port})")
                     
                     # 상태 체크 수행
-                    result = self.ping_raspberry(raspberry.ip, raspberry.port)
+                    result = self.health_check_request(raspberry.ip, raspberry.port)
                     
                     # 상태 체크 결과 저장
                     status_check = RaspberryStatus(
