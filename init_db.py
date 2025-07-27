@@ -58,29 +58,53 @@ def init_database():
             if user and raspberry:
                 # 포트홀 1 생성
                 pothole1 = PotHole(
-                    video_path='uploads/potholes/sample_pothole_1.png',
-                    address='서울특별시 강남구 테헤란로 123',
-                    latitude=37.5665,
-                    longitude=126.9780,
+                    video_path='uploads/potholes/pothole_1.webp',
+                    address='부산광역시 해운대구 센텀남대로 76',
+                    latitude=35.173220,
+                    longitude=129.129040,
                     raspberry_id=raspberry.id
                 )
                 
                 # 포트홀 2 생성
                 pothole2 = PotHole(
-                    video_path='uploads/potholes/sample_pothole_2.png',
-                    address='서울특별시 서초구 서초대로 456',
-                    latitude=37.5013,
-                    longitude=127.0246,
+                    video_path='uploads/potholes/pothole_2.webp',
+                    address='부산광역시 해운대구 센텀남대로 76 부산지하철 센텀시티역',
+                    latitude=35.171760,
+                    longitude=129.130371,
                     raspberry_id=raspberry.id
                 )
-                
-                db.session.add(pothole1)
-                db.session.add(pothole2)
+
+                pothole3 = PotHole(
+                    video_path='uploads/potholes/pothole_3.webp',
+                    address='부산광역시 해운대구 재송동 920-14',
+                    latitude=35.190735,
+                    longitude=129.120342,
+                    raspberry_id=raspberry.id
+                )
+
+                pothole4 = PotHole(
+                    video_path='uploads/potholes/pothole_4.webp',
+                    address='부산광역시 해운대구 반여동 산158-9',
+                    latitude=35.192960,
+                    longitude=129.118946,
+                    raspberry_id=raspberry.id
+                )
+
+                pothole5 = PotHole(
+                    video_path='uploads/potholes/pothole_5.webp',
+                    address='부산광역시 사상구 삼락동 29-2',
+                    latitude=35.164215,
+                    longitude=128.975354,
+                    raspberry_id=raspberry.id
+                )
+                potholes = [pothole1, pothole2, pothole3, pothole4, pothole5]
+                for pothole in potholes:
+                    db.session.add(pothole)
                 db.session.commit()
                 
-                print("초기 포트홀 2개가 생성되었습니다:")
-                print(f"- 포트홀 1: {pothole1.address} (위도: {pothole1.latitude}, 경도: {pothole1.longitude})")
-                print(f"- 포트홀 2: {pothole2.address} (위도: {pothole2.latitude}, 경도: {pothole2.longitude})")
+                print(f"초기 포트홀 {len(potholes)}개가 생성되었습니다:")
+                for pothole in potholes:
+                    print(f"- 포트홀 {pothole.id}: {pothole.address} (위도: {pothole.latitude}, 경도: {pothole.longitude})")
             else:
                 print("사용자 또는 라즈베리파이 기기가 없어서 포트홀을 생성할 수 없습니다.")
         else:
