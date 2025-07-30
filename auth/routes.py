@@ -1,6 +1,6 @@
-from flask import request
+from flask import request, make_response, jsonify
 from flask_restx import Resource
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, set_access_cookies
 import bcrypt
 from core.db import db
 from auth.models import User
@@ -90,10 +90,14 @@ class Login(Resource):
                 access_token = create_access_token(identity=f'{user.id}')
                 print(f'토큰 : {access_token}')
                 
-                return {
+                
+                response = make_response(jsonify({
                     'access_token': access_token,
                     'user': user.to_dict()
-                }, 200
+                }))
+                set_access_cookies(response, access_token)
+                #response.set_cookie('access_token', access_token,  httponly=True, samesite='None', domain="localhost", secure=True)
+                return response
 
 def init_auth_routes(api, schemas):
     """Auth 라우트 초기화"""

@@ -20,7 +20,8 @@ from raspberry.models import Raspberry, RaspberryStatus
 from pothole.models import PotHole
 
 app = Flask(__name__)
-CORS(app)
+CORS(app,origins=["http://localhost:5173"], 
+     supports_credentials=True)
 
 # Flask-RESTX 설정
 api = Api(app, version='1.0', title='라즈베리파이 Pothole API', description='Pothole API 문서')
@@ -30,6 +31,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'your-secret-key')  # 실제 운영시에는 환경변수로 관리
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
+
+app.config['JWT_TOKEN_LOCATION'] = ['cookies']  # 헤더와 쿠키 모두에서 검색
+# app.config['JWT_COOKIE_CSRF_PROTECT'] = False
+# app.config['JWT_COOKIE_SECURE'] = False
 
 # 스케줄러 설정
 app.config['SCHEDULER_API_ENABLED'] = True
