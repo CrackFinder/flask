@@ -33,7 +33,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'your-secret-key')  # 실제 운영시에는 환경변수로 관리
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 
-app.config['JWT_TOKEN_LOCATION'] = ['cookies']  # 헤더와 쿠키 모두에서 검색
+app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']  # 헤더와 쿠키 모두에서 검색
+app.config['JWT_HEADER_NAME'] = 'Authorization'  # 헤더 이름
+app.config['JWT_HEADER_TYPE'] = 'Bearer'  # 헤더 타입
 # app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 # app.config['JWT_COOKIE_SECURE'] = False
 
