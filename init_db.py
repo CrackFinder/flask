@@ -97,7 +97,48 @@ def init_database():
                     longitude=128.975354,
                     raspberry_id=raspberry.id
                 )
-                potholes = [pothole1, pothole2, pothole3, pothole4, pothole5]
+
+                pothole6 = PotHole(
+                    video_path='uploads/potholes/pothole_6.webp',
+                    address='부산광역시 남구 감만동 511-122',
+                    latitude=35.111299,
+                    longitude=129.077812,
+                    raspberry_id=raspberry.id
+                )
+
+                pothole7 = PotHole(
+                    video_path='uploads/potholes/pothole_7.webp',
+                    address='부산광역시 남구 감만동 418-5',
+                    latitude=35.115983,
+                    longitude=129.075394,
+                    raspberry_id=raspberry.id
+                )
+
+                pothole8 = PotHole(
+                    video_path='uploads/potholes/pothole_8.webp',
+                    address='부산광역시 남구 우암동 103-18',
+                    latitude=35.127738,
+                    longitude=129.082751,
+                    raspberry_id=raspberry.id
+                )
+
+                pothole9 = PotHole(
+                    video_path='uploads/potholes/pothole_9.webp',
+                    address='부산광역시 남구 대연동 329-4',
+                    latitude=35.135387,
+                    longitude=129.094148,
+                    raspberry_id=raspberry.id
+                )
+
+                pothole10 = PotHole(
+                    video_path='uploads/potholes/pothole_10.webp',
+                    address='부산광역시 남구 대연동 267-2',
+                    latitude=35.148530,
+                    longitude=129.093321,
+                    raspberry_id=raspberry.id
+                )
+
+                potholes = [pothole1, pothole2, pothole3, pothole4, pothole5, pothole6, pothole7, pothole8, pothole9, pothole10]
                 for pothole in potholes:
                     db.session.add(pothole)
                 db.session.commit()
