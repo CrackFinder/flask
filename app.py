@@ -20,8 +20,9 @@ from raspberry.models import Raspberry, RaspberryStatus
 from pothole.models import PotHole
 
 app = Flask(__name__)
-CORS(app,origins=["http://localhost:5173"], 
-     supports_credentials=True)
+# CORS 설정 - 환경변수에서 허용할 도메인 가져오기
+allowed_origins = os.environ.get('ALLOWED_ORIGINS', 'http://localhost:5173,https://crack-front.vercel.app').split(',')
+CORS(app, origins=allowed_origins, supports_credentials=True)
 
 # Flask-RESTX 설정
 api = Api(app, version='1.0', title='라즈베리파이 Pothole API', description='Pothole API 문서')
