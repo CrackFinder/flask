@@ -58,87 +58,49 @@ def init_database():
             if user and raspberry:
                 # 포트홀 1 생성
                 pothole1 = PotHole(
-                    video_path='uploads/potholes/pothole_1.webp',
-                    address='부산광역시 해운대구 센텀남대로 76',
-                    latitude=35.173220,
-                    longitude=129.129040,
+                    video_path='uploads/potholes/pothole_1.png',
+                    address='울산광역시 북구 진장로 94',
+                    latitude=35.569428,
+                    longitude=129.356906,
                     raspberry_id=raspberry.id
                 )
                 
                 # 포트홀 2 생성
                 pothole2 = PotHole(
-                    video_path='uploads/potholes/pothole_2.webp',
-                    address='부산광역시 해운대구 센텀남대로 76 부산지하철 센텀시티역',
-                    latitude=35.171760,
-                    longitude=129.130371,
+                    video_path='uploads/potholes/pothole_2.png',
+                    address='울산광역시 북구 번영로 636',
+                    latitude=35.574955,
+                    longitude=129.356648,
                     raspberry_id=raspberry.id
                 )
 
                 pothole3 = PotHole(
-                    video_path='uploads/potholes/pothole_3.webp',
-                    address='부산광역시 해운대구 재송동 920-14',
-                    latitude=35.190735,
-                    longitude=129.120342,
+                    video_path='uploads/potholes/pothole_3.png',
+                    address='울산광역시 북구 화봉동 957-9',
+                    latitude=35.588321,
+                    longitude=129.360265,
                     raspberry_id=raspberry.id
                 )
 
                 pothole4 = PotHole(
-                    video_path='uploads/potholes/pothole_4.webp',
-                    address='부산광역시 해운대구 반여동 산158-9',
-                    latitude=35.192960,
-                    longitude=129.118946,
+                    video_path='uploads/potholes/pothole_4.png',
+                    address='울산광역시 중구 서동 107',
+                    latitude=35.580650,
+                    longitude=129.344593,
                     raspberry_id=raspberry.id
                 )
 
                 pothole5 = PotHole(
-                    video_path='uploads/potholes/pothole_5.webp',
-                    address='부산광역시 사상구 삼락동 29-2',
-                    latitude=35.164215,
-                    longitude=128.975354,
+                    video_path='uploads/potholes/pothole_5.png',
+                    address='울산광역시 남구 신정동 236-28',
+                    latitude=35.544419,
+                    longitude=129.320969,
                     raspberry_id=raspberry.id
                 )
 
-                pothole6 = PotHole(
-                    video_path='uploads/potholes/pothole_6.webp',
-                    address='부산광역시 남구 감만동 511-122',
-                    latitude=35.111299,
-                    longitude=129.077812,
-                    raspberry_id=raspberry.id
-                )
+                
 
-                pothole7 = PotHole(
-                    video_path='uploads/potholes/pothole_7.webp',
-                    address='부산광역시 남구 감만동 418-5',
-                    latitude=35.115983,
-                    longitude=129.075394,
-                    raspberry_id=raspberry.id
-                )
-
-                pothole8 = PotHole(
-                    video_path='uploads/potholes/pothole_8.webp',
-                    address='부산광역시 남구 우암동 103-18',
-                    latitude=35.127738,
-                    longitude=129.082751,
-                    raspberry_id=raspberry.id
-                )
-
-                pothole9 = PotHole(
-                    video_path='uploads/potholes/pothole_9.webp',
-                    address='부산광역시 남구 대연동 329-4',
-                    latitude=35.135387,
-                    longitude=129.094148,
-                    raspberry_id=raspberry.id
-                )
-
-                pothole10 = PotHole(
-                    video_path='uploads/potholes/pothole_10.webp',
-                    address='부산광역시 남구 대연동 267-2',
-                    latitude=35.148530,
-                    longitude=129.093321,
-                    raspberry_id=raspberry.id
-                )
-
-                potholes = [pothole1, pothole2, pothole3, pothole4, pothole5, pothole6, pothole7, pothole8, pothole9, pothole10]
+                potholes = [pothole1, pothole2, pothole3, pothole4, pothole5]
                 for pothole in potholes:
                     db.session.add(pothole)
                 db.session.commit()
